@@ -76,7 +76,7 @@ Resources:
 
 The ```parameters.json``` file, holds the values of variables we defined in the ```main.yml``` file.
 
-Run the file
+To build your stack, run:
 ```bash
 $ aws cloudformation create-stack --stack-name stackname --template-body file://file.yml --parameters file://file.json
 {
@@ -86,7 +86,6 @@ $ aws cloudformation create-stack --stack-name stackname --template-body file://
 <img width="851" alt="image" src="https://user-images.githubusercontent.com/49791498/189965240-8194ff64-c5a8-4ab0-a743-93a07d5834c2.png">
 
 *CloudFormation Stack*
-
 
 ### CloudFormation Commands
 - To create a stack:
@@ -113,11 +112,24 @@ delete-stack \
 
 You can find more CloudFormation commands [here](https://docs.aws.amazon.com/cli/latest/reference/cloudformation/index.html).
 
-**Note**: Deleting a stack, deletes all resources which the stack provisioned.
+**Note**: 
+- Deleting a stack, deletes all resources which the stack provisioned.
+- After updating or creating your stack, you can validate your script using AWS CloudFormation's designer by:
+  - Clicking on 'View in Designer'.
+  <img width="696" alt="Screenshot 2022-09-14 at 14 01 25" src="https://user-images.githubusercontent.com/49791498/190161194-fcff3c07-5db5-4fdd-b9a4-28e1fe84d67d.png">
+
+    *View in Designer*
+   - Editing and validating your code. Viewing your code in JSON format, clearly shows the error source.
+
+      <img width="726" alt="Screenshot 2022-09-14 at 15 31 31" src="https://user-images.githubusercontent.com/49791498/190184539-7f7e8cb7-5f08-4e81-a7b3-91b22eea57ff.png">
+
+      *Validate button*
+
+#### Conclusion (why should u use cloudformation)
+CloudFormation is your go-to tool when you only want to provision AWS resources. Your CloudFormation scripts can be in either JSON or YAML file formats, however there is caveat where your files cannot exceed 51MB.
+If your files exceed 51MB, you would have to created nested stacks.
+
+Thanks for your time, look forward to other articles in this series.
 
 
-#### Provision an EC2 instance
 
-spinning up the infrastructure
-nested stacks
-conclusion (why should u use cloudformation)
