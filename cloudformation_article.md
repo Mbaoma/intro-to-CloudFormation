@@ -86,22 +86,22 @@ Resources:
           - Key: Name
             Value: !Ref EnvironmentName
     
-    AttachGateway:
+  AttachGateway:
       Type: 'AWS::EC2::VPCGatewayAttachment'
       Properties:
         InternetGatewayId: !Ref InternetGateway
         VpcId: !Ref VPC
     
-    KeyName:
+  KeyName:
       Type: 'AWS::EC2::KeyPair'
       Properties:
-        KeyName: scaTask
+        KeyName: cfArticle
         KeyType: rsa
         Tags:
           - Key: Name
             Value: !Ref EnvironmentName
     
-    PublicSubnet:
+  PublicSubnet:
       Type: 'AWS::EC2::Subnet'
       Properties:
         VpcId: !Ref VPC
@@ -110,9 +110,9 @@ Resources:
         MapPublicIpOnLaunch: true
         Tags:
           - Key: Name
-            Value: Public Subnet 
+            Value: !Ref EnvironmentName
     
-    PrivateSubnet:
+  PrivateSubnet:
       Type: 'AWS::EC2::Subnet'
       Properties:
         VpcId: !Ref VPC
@@ -121,15 +121,15 @@ Resources:
         AvailabilityZone: us-west-1b
         Tags:
           - Key: Name
-            Value: Private Subnet 
+            Value: !Ref EnvironmentName
 
   PublicRouteTable:
     Type: 'AWS::EC2::RouteTable'
     Properties:
       VpcId: !Ref VPC
       Tags:
-        - Key: Name
-          Value: Public Route Table
+          - Key: Name
+            Value: !Ref EnvironmentName
   
   PublicRoute:
     Type: 'AWS::EC2::Route'
@@ -166,24 +166,22 @@ Resources:
       SecurityGroupIds:
         - !Ref SecurityGroup
       SubnetId: !Ref PublicSubnet
-      KeyName: !Ref KeyName   
+      KeyName: !Ref KeyName    
 
   SecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
-      GroupDescription: Security group to allow traffic to and from ports 80 and 443.
+      GroupDescription: Security group to allow traffic to and from ports 80 and 22.
       VpcId: !Ref VPC
       SecurityGroupIngress:
         - IpProtocol: tcp
-          FromPort: 22
-          ToPort: 22
-          SourceSecurityGroupId:
-            Fn::GetAtt:
-            - ELBSecurityGroup
-            - GroupId  
-        - IpProtocol: tcp
           FromPort: 80
           ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
       Tags:
         - Key: Name
           Value: !Ref EnvironmentName        
@@ -195,10 +193,6 @@ Resources:
     {
         "ParameterKey": "EnvironmentName",
         "ParameterValue": "cfArticle"
-    },
-    {
-        "ParameterKey": "VpcCIDR",
-        "ParameterValue": "10.0.0.0/16"
     }    
 
 ]
@@ -216,6 +210,17 @@ $ aws cloudformation create-stack --stack-name stackname --template-body file://
 <img width="851" alt="image" src="https://user-images.githubusercontent.com/49791498/189965240-8194ff64-c5a8-4ab0-a743-93a07d5834c2.png">
 
 *CloudFormation Stack*
+
+#### Connecting to your EC2 Instance
+For you to SSH into your instance, you have to [create](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/create-key-pairs.html#having-ec2-create-your-key-pair) the keypair and refence it in your CloudFormation script like so: 
+```bash
+KeyName: your-ec2-keypair
+```
+
+You can also connect to your instance using the EC2 Instance Connect (if you created the KeyPair using CloudFormation).
+
+<img width="818" alt="Screenshot 2022-09-15 at 14 36 26" src="https://user-images.githubusercontent.com/49791498/190419483-d87377d1-1e8e-46b1-8a2e-476de5da3be1.png">
+*EC2 Instance Connect*
 
 ### CloudFormation Commands
 - To create a stack:
@@ -260,5 +265,6 @@ CloudFormation is your go-to tool when you only want to provision AWS resources.
 If your files exceed 51MB, you would have to created nested stacks.
 
 Thanks for your time, kindly look forward to other articles in this series.
+
 
 
