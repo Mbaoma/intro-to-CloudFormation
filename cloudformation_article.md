@@ -1,10 +1,12 @@
 ## AWS CloudFormation Series
-While learning about [CloudFormation](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html), I noticed there are not a lot of beginner-friendly articles available. Hence, the reason for this series of mine.
+While learning about [CloudFormation](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html), I noticed there were not a lot of beginner-friendly articles available. Hence, the reason for this series of mine.
 
 In this series, I aim to cover foundational concepts around AWS EC2 instances and services to help people new to CloudFormation.
 
 ### What is CloudFormation
-I refer to AWS CloudFormation as [Terraform](https://registry.terraform.io/) for AWS services. [Terraform](https://www.terraform.io/intro) is an Infrastructure as Code (IaC) tool that helps you provision resources across various cloud and on-prem services while CloudFormation is an IaC tool that models, provisions, and manages AWS and thrid-party services.
+I refer to AWS CloudFormation as [Terraform](https://www.terraform.io/intro) for AWS services.
+
+Cloudformation like Terraform, is an Infrastructure as Code (IaC) tool that helps you provision resources. CloudFormation is AWS focused while Terraform works across various cloud and on-prem services.
 
 According to the official documentation,
 "CloudFormation is a service that helps you model and set up your AWS resources so that you can spend less time managing those resources and more time focusing on your applications that run in AWS."
@@ -209,7 +211,7 @@ $ aws cloudformation create-stack --stack-name stackname --template-body file://
 ```
 <img width="851" alt="image" src="https://user-images.githubusercontent.com/49791498/189965240-8194ff64-c5a8-4ab0-a743-93a07d5834c2.png">
 
-*CloudFormation Stack*
+*CloudFormation [Stack](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/stacks.html) showing a collection of AWS resources that you can manage as a single unit*
 
 #### Connecting to your EC2 Instance
 For you to SSH into your instance, you have to [create](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/create-key-pairs.html#having-ec2-create-your-key-pair) the keypair and refence it in your CloudFormation script like so: 
