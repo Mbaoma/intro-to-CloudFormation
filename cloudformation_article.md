@@ -97,7 +97,7 @@ Resources:
   KeyName:
       Type: 'AWS::EC2::KeyPair'
       Properties:
-        KeyName: cfArticle
+        KeyName: <keyname>
         KeyType: rsa
         Tags:
           - Key: Name
@@ -108,7 +108,7 @@ Resources:
       Properties:
         VpcId: !Ref VPC
         CidrBlock: 10.0.1.0/24
-        AvailabilityZone: us-west-1b
+        AvailabilityZone: <your-az-zone>
         MapPublicIpOnLaunch: true
         Tags:
           - Key: Name
@@ -120,7 +120,7 @@ Resources:
         VpcId: !Ref VPC
         CidrBlock: 10.0.2.0/24
         MapPublicIpOnLaunch: false
-        AvailabilityZone: us-west-1b
+        AvailabilityZone: <your-az-zone>
         Tags:
           - Key: Name
             Value: !Ref EnvironmentName
@@ -163,7 +163,7 @@ Resources:
   EC2Instance:
     Type: 'AWS::EC2::Instance'
     Properties:
-      ImageId: ami-018d291ca9ffc002f
+      ImageId: ami-xxxxxx
       InstanceType: t2.micro
       SecurityGroupIds:
         - !Ref SecurityGroup
