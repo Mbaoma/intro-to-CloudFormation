@@ -210,16 +210,16 @@ Resources:
       Matcher:
         HttpCode: '200'
       Name: EC2TargetGroup1
-      Port: [80,443]
+      Port: 80
       Protocol: HTTP
       TargetGroupAttributes:
         - Key: deregistration_delay.timeout_seconds
           Value: '20'
       Targets:
         - Id: !Ref EC2Instance1
-          Port: [80,443]
+          Port: 80
         - Id: !Ref EC2Instance2
-          Port: [80,443]
+          Port: 443
       UnhealthyThresholdCount: 3
       VpcId: !Ref VPC
   
@@ -253,18 +253,18 @@ Resources:
         - Type: forward
           TargetGroupArn: !Ref EC2TargetGroup1
       LoadBalancerArn: !Ref ApplicationLoadBalancer
-      Port: [80,443]
+      Port: 80
       Protocol: HTTP
   
-  # ALBListener2:
-  #   Type: 'AWS::ElasticLoadBalancingV2::Listener'
-  #   Properties:
-  #     DefaultActions:
-  #       - Type: forward
-  #         TargetGroupArn: !Ref EC2TargetGroup1
-  #     LoadBalancerArn: !Ref ApplicationLoadBalancer
-  #     Port: 443
-  #     Protocol: HTTP
+  ALBListener2:
+    Type: 'AWS::ElasticLoadBalancingV2::Listener'
+    Properties:
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref EC2TargetGroup1
+      LoadBalancerArn: !Ref ApplicationLoadBalancer
+      Port: 443
+      Protocol: HTTP
   
   ApplicationLoadBalancer:
     Type: 'AWS::ElasticLoadBalancingV2::LoadBalancer'
