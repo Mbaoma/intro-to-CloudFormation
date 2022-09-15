@@ -1,13 +1,13 @@
 ## AWS CloudFormation Series: Create an EC2 Instance
 While learning about [CloudFormation](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html), I noticed there are not a lot of beginner-friendly articles available. Hence, the reason for this series of mine.
 
-In this series, I aim to cover foundational concepts around AWS EC2 instances and services to provide value to people new to CloudFormation.
+In this series, I aim to cover foundational concepts around AWS EC2 instances and services to help people new to CloudFormation.
 
 ### What is CloudFormation
-I refer to AWS CloudFormation as [Terraform](https://registry.terraform.io/) for AWS services.
+I refer to AWS CloudFormation as [Terraform](https://registry.terraform.io/) for AWS services. [Terraform](https://www.terraform.io/intro) is an Infrastructure as Code (IaC) tool that helps you provision resources across various cloud and on-prem services while CloudFormation is an IaC tool that models, provisions, and manages AWS and thrid-party services.
 
 According to the official documentation,
-"It is a service that helps you model and set up your AWS resources so that you can spend less time managing those resources and more time focusing on your applications that run in AWS."
+"CloudFormation is a service that helps you model and set up your AWS resources so that you can spend less time managing those resources and more time focusing on your applications that run in AWS."
 
 ### What are EC2 instances and what goes into creating them?
 [EC2](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/concepts.html
