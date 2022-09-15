@@ -131,5 +131,7 @@ If your files exceed 51MB, you would have to created nested stacks.
 
 Thanks for your time, look forward to other articles in this series.
 
+#### Provision an EC2 instance
 
+#### Nested stacks
 

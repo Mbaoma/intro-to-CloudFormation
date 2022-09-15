@@ -15,17 +15,20 @@ Resources:
       Tags:
         - Key: Name
           Value: !Ref EnvironmentName
+  
   InternetGateway:
     Type: 'AWS::EC2::InternetGateway'
     Properties:
       Tags:
         - Key: Name
           Value: !Ref EnvironmentName
+  
   AttachGateway:
     Type: 'AWS::EC2::VPCGatewayAttachment'
     Properties:
       InternetGatewayId: !Ref InternetGateway
       VpcId: !Ref VPC
+  
   KeyName:
     Type: 'AWS::EC2::KeyPair'
     Properties:
@@ -34,6 +37,7 @@ Resources:
       Tags:
         - Key: Name
           Value: !Ref EnvironmentName
+  
   PublicSubnet1:
     Type: 'AWS::EC2::Subnet'
     Properties:
@@ -44,6 +48,7 @@ Resources:
       Tags:
         - Key: Name
           Value: Public Subnet 1
+  
   PrivateSubnet1:
     Type: 'AWS::EC2::Subnet'
     Properties:
@@ -54,6 +59,7 @@ Resources:
       Tags:
         - Key: Name
           Value: Private Subnet 1
+  
   PublicSubnet2:
     Type: 'AWS::EC2::Subnet'
     Properties:
@@ -64,6 +70,7 @@ Resources:
       Tags:
         - Key: Name
           Value: Public Subnet 2
+  
   PrivateSubnet2:
     Type: 'AWS::EC2::Subnet'
     Properties:
@@ -74,6 +81,7 @@ Resources:
       Tags:
         - Key: Name
           Value: Private Subnet 2
+  
   PublicRouteTable:
     Type: 'AWS::EC2::RouteTable'
     Properties:
@@ -81,22 +89,26 @@ Resources:
       Tags:
         - Key: Name
           Value: Public Route Table
+  
   PublicRoute:
     Type: 'AWS::EC2::Route'
     Properties:
       RouteTableId: !Ref PublicRouteTable
       DestinationCidrBlock: 0.0.0.0/0
       GatewayId: !Ref InternetGateway
+  
   PublicSubnetRouteTableAssociation1:
     Type: 'AWS::EC2::SubnetRouteTableAssociation'
     Properties:
       SubnetId: !Ref PublicSubnet1
       RouteTableId: !Ref PublicRouteTable
+  
   PublicSubnetRouteTableAssociation2:
     Type: 'AWS::EC2::SubnetRouteTableAssociation'
     Properties:
       SubnetId: !Ref PublicSubnet2
       RouteTableId: !Ref PublicRouteTable
+  
   PrivateRouteTable:
     Type: 'AWS::EC2::RouteTable'
     Properties:
@@ -104,20 +116,23 @@ Resources:
       Tags:
         - Key: Name
           Value: !Ref EnvironmentName
+  
   PrivateSubnetRouteTableAssociation1:
     Type: 'AWS::EC2::SubnetRouteTableAssociation'
     Properties:
       SubnetId: !Ref PrivateSubnet1
       RouteTableId: !Ref PrivateRouteTable
+  
   PrivateSubnetRouteTableAssociation2:
     Type: 'AWS::EC2::SubnetRouteTableAssociation'
     Properties:
       SubnetId: !Ref PrivateSubnet2
       RouteTableId: !Ref PrivateRouteTable
+  
   EC2Instance1:
     Type: 'AWS::EC2::Instance'
     Properties:
-      ImageId: ami-085284d24fe829cd0
+      ImageId: ami-018d291ca9ffc002f
       InstanceType: t2.micro
       SecurityGroupIds:
         - !Ref SecurityGroup
@@ -130,11 +145,12 @@ Resources:
           yum install -y httpd
           systemctl start httpd
           systemctl enable httpd
-          #echo "<h1>Server-1</h1>" > /var/www/html/index.html
+          echo "<h1>Server-1</h1>" > /var/www/html/index.html
+  
   EC2Instance2:
     Type: 'AWS::EC2::Instance'
     Properties:
-      ImageId: ami-085284d24fe829cd0
+      ImageId: ami-018d291ca9ffc002f
       InstanceType: t2.micro
       SecurityGroupIds:
         - !Ref SecurityGroup
@@ -147,7 +163,8 @@ Resources:
           yum install -y httpd
           systemctl start httpd
           systemctl enable httpd
-          #echo "<h1>Server-2</h1>" > /var/www/html/index.html
+          echo "<h1>Server-2</h1>" > /var/www/html/index.html
+  
   ELBSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
@@ -162,6 +179,7 @@ Resources:
           FromPort: 443
           ToPort: 443
           CidrIp: 0.0.0.0/0
+  
   SecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
@@ -171,58 +189,63 @@ Resources:
         - IpProtocol: tcp
           FromPort: 80
           ToPort: 80
-          CidrIp: 0.0.0.0/0
+          SourceSecurityGroupId:
+            Fn::GetAtt:
+            - ELBSecurityGroup
+            - GroupId  
         - IpProtocol: tcp
           FromPort: 443
           ToPort: 443
-          CidrIp: 0.0.0.0/0
       Tags:
         - Key: Name
           Value: !Ref EnvironmentName
+  
   EC2TargetGroup1:
     Type: 'AWS::ElasticLoadBalancingV2::TargetGroup'
     Properties:
-      HealthCheckIntervalSeconds: 35
+      HealthCheckIntervalSeconds: 20
       HealthCheckProtocol: HTTP
-      HealthCheckTimeoutSeconds: 20
+      HealthCheckTimeoutSeconds: 15
       HealthyThresholdCount: 5
       Matcher:
         HttpCode: '200'
       Name: EC2TargetGroup1
-      Port: 80
+      Port: [80,443]
       Protocol: HTTP
       TargetGroupAttributes:
         - Key: deregistration_delay.timeout_seconds
           Value: '20'
       Targets:
         - Id: !Ref EC2Instance1
-          Port: 80
+          Port: [80,443]
         - Id: !Ref EC2Instance2
-          Port: 80
+          Port: [80,443]
       UnhealthyThresholdCount: 3
       VpcId: !Ref VPC
-  EC2TargetGroup2:
-    Type: 'AWS::ElasticLoadBalancingV2::TargetGroup'
-    Properties:
-      HealthCheckIntervalSeconds: 35
-      HealthCheckProtocol: HTTP
-      HealthCheckTimeoutSeconds: 20
-      HealthyThresholdCount: 5
-      Matcher:
-        HttpCode: '200'
-      Name: EC2TargetGroup2
-      Port: 443
-      Protocol: HTTP
-      TargetGroupAttributes:
-        - Key: deregistration_delay.timeout_seconds
-          Value: '20'
-      Targets:
-        - Id: !Ref EC2Instance1
-          Port: 443
-        - Id: !Ref EC2Instance2
-          Port: 443
-      UnhealthyThresholdCount: 3
-      VpcId: !Ref VPC
+  
+  # EC2TargetGroup2:
+  #   Type: 'AWS::ElasticLoadBalancingV2::TargetGroup'
+  #   Properties:
+  #     HealthCheckIntervalSeconds: 20
+  #     HealthCheckProtocol: HTTP
+  #     HealthCheckTimeoutSeconds: 15
+  #     HealthyThresholdCount: 5
+  #     Matcher:
+  #       HttpCode: '200'
+  #     Name: EC2TargetGroup2
+  #     Port: 443
+  #     Protocol: HTTP
+  #     TargetGroupAttributes:
+  #       - Key: deregistration_delay.timeout_seconds
+  #         Value: '20'
+  #     Targets:
+  #       - Id: !Ref EC2Instance1
+  #         Port: 443
+  #       - Id: !Ref EC2Instance2
+  #         Port: 443
+  #     UnhealthyThresholdCount: 3
+  #     VpcId: !Ref VPC
+  
   ALBListener1:
     Type: 'AWS::ElasticLoadBalancingV2::Listener'
     Properties:
@@ -230,17 +253,19 @@ Resources:
         - Type: forward
           TargetGroupArn: !Ref EC2TargetGroup1
       LoadBalancerArn: !Ref ApplicationLoadBalancer
-      Port: 80
+      Port: [80,443]
       Protocol: HTTP
-  ALBListener2:
-    Type: 'AWS::ElasticLoadBalancingV2::Listener'
-    Properties:
-      DefaultActions:
-        - Type: forward
-          TargetGroupArn: !Ref EC2TargetGroup2
-      LoadBalancerArn: !Ref ApplicationLoadBalancer
-      Port: 443
-      Protocol: HTTP
+  
+  # ALBListener2:
+  #   Type: 'AWS::ElasticLoadBalancingV2::Listener'
+  #   Properties:
+  #     DefaultActions:
+  #       - Type: forward
+  #         TargetGroupArn: !Ref EC2TargetGroup1
+  #     LoadBalancerArn: !Ref ApplicationLoadBalancer
+  #     Port: 443
+  #     Protocol: HTTP
+  
   ApplicationLoadBalancer:
     Type: 'AWS::ElasticLoadBalancingV2::LoadBalancer'
     Properties:
