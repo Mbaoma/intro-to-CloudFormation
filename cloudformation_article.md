@@ -264,8 +264,10 @@ You can find more CloudFormation commands [here](https://docs.aws.amazon.com/cli
 
 #### Conclusion
 CloudFormation is your go-to tool when you only want to provision AWS resources. Your CloudFormation scripts can be in either JSON or YAML file formats, however there is caveat where your files cannot exceed 51MB.
-If your files exceed 51MB, you would have to created nested stacks.
+If your files exceed 51MB, you would have to create nested stacks.
 
+Feel free to refer to my [GitHub Repo](https://github.com/Mbaoma/intro-to-CloudFormation/tree/main).
+ 
 Thanks for your time, kindly look forward to other articles in this series.
 
 

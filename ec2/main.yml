@@ -1,0 +1,130 @@
+Description: 
+  Creating an EC2 Instance
+
+Parameters:
+
+  EnvironmentName:
+    Description: Prefixed to resources
+    Type: String
+
+  VpcCIDR:
+    Description: IP range (CIDR notation)
+    Type: String
+    Default: 10.0.0.0/16
+
+Resources:
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties: 
+      CidrBlock: !Ref VpcCIDR
+      EnableDnsHostnames: 'true'   
+      Tags:
+        - Key: Name 
+          Value:  !Ref EnvironmentName
+
+  InternetGateway:
+      Type: 'AWS::EC2::InternetGateway'
+      Properties:
+        Tags:
+          - Key: Name
+            Value: !Ref EnvironmentName
+    
+  AttachGateway:
+      Type: 'AWS::EC2::VPCGatewayAttachment'
+      Properties:
+        InternetGatewayId: !Ref InternetGateway
+        VpcId: !Ref VPC
+    
+  KeyName:
+      Type: 'AWS::EC2::KeyPair'
+      Properties:
+        KeyName: <keyname>
+        KeyType: rsa
+        Tags:
+          - Key: Name
+            Value: !Ref EnvironmentName
+    
+  PublicSubnet:
+      Type: 'AWS::EC2::Subnet'
+      Properties:
+        VpcId: !Ref VPC
+        CidrBlock: 10.0.1.0/24
+        AvailabilityZone: <your-az-zone>
+        MapPublicIpOnLaunch: true
+        Tags:
+          - Key: Name
+            Value: !Ref EnvironmentName
+    
+  PrivateSubnet:
+      Type: 'AWS::EC2::Subnet'
+      Properties:
+        VpcId: !Ref VPC
+        CidrBlock: 10.0.2.0/24
+        MapPublicIpOnLaunch: false
+        AvailabilityZone: <your-az-zone>
+        Tags:
+          - Key: Name
+            Value: !Ref EnvironmentName
+
+  PublicRouteTable:
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+          - Key: Name
+            Value: !Ref EnvironmentName
+  
+  PublicRoute:
+    Type: 'AWS::EC2::Route'
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+  
+  PublicSubnetRouteTableAssociation:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref PublicSubnet
+      RouteTableId: !Ref PublicRouteTable  
+
+  PrivateRouteTable:
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Ref EnvironmentName
+  
+  PrivateSubnetRouteTableAssociation:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref PrivateSubnet
+      RouteTableId: !Ref PrivateRouteTable    
+
+  EC2Instance:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      ImageId: ami-xxxxxx
+      InstanceType: t2.micro
+      SecurityGroupIds:
+        - !Ref SecurityGroup
+      SubnetId: !Ref PublicSubnet
+      KeyName: !Ref KeyName    
+
+  SecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: Security group to allow traffic to and from ports 80 and 22.
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: !Ref EnvironmentName 
